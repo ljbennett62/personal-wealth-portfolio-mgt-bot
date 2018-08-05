@@ -38,7 +38,8 @@ app.use('/api/', rateLimit({
 
 if (process.env.USE_WEBUI) {
   app.use(bodyParser.json());
-  app.use(express.static('public'));
+  //app.use(express.static('public'));
+  app.use(express.static(__dirname + '/public'));
 }
 else if (process.env.USE_TWILIO_SMS) {
   // Twilio posts XML so that's how we'll parse the incoming request
