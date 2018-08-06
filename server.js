@@ -26,6 +26,7 @@ var port = process.env.VCAP_APP_PORT || process.env.PORT || 3000;
 var http = require('http').Server(app);
 var debug = require('debug')('bot:server');
 
+debug('before app use helmet ');
 
 // configure express
 app.use(helmet()); //Helmet helps you secure your Express apps
@@ -35,17 +36,19 @@ app.use('/api/', rateLimit({
   max: 15
 }));
 
+debug('after app use helmet ');
 
-if (process.env.USE_WEBUI) {
+//if (process.env.USE_WEBUI) {
+  debug('inside use webui ');
   app.use(bodyParser.json());
   //app.use(express.static('public'));
   app.use(express.static(__dirname + '/public'));
-}
-else if (process.env.USE_TWILIO_SMS) {
+//}
+/*else if (process.env.USE_TWILIO_SMS) {
   // Twilio posts XML so that's how we'll parse the incoming request
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(express.static('public'));
-}
+}*/
 
 // Helper Function to check for environment variables
 var checkAndRequire = function(envItem, toRequire, debugMessage) {
@@ -57,11 +60,13 @@ var checkAndRequire = function(envItem, toRequire, debugMessage) {
   }
 };
 
+ debug('before config channnels ');
 // configure the channels
 var controller = require('./lib/controller');
 checkAndRequire(process.env.USE_TWILIO, './lib/bot/twilio', 'Initializing Twilio Bot');
 checkAndRequire(process.env.USE_TWILIO_SMS, './lib/bot/twilio-sms', 'Initializing Twilio SMS Bot');
-checkAndRequire(process.env.USE_WEBUI, './lib/bot/web-ui', 'Initializing WebUI');
+//checkAndRequire(process.env.USE_WEBUI, './lib/bot/web-ui', 'Initializing WebUI');
+checkAndRequire('true', './lib/bot/web-ui', 'Initializing WebUI');
 
 http.listen(port, function () {
   debug('Server listening on port: ' + port);
